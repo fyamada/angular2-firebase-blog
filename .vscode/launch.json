@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Chrome against 192.168.1.103, with sourcemaps",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://192.168.1.103:3000",
+            "runtimeArgs": [
+              "--disable-web-security",
+              "--user-data-dir",
+              "--remote-debugging-port=9222"
+            ],
+            "sourceMaps": true,
+            "webRoot": "${workspaceRoot}"
+        },
+        {
+            "name": "Attach to Chrome against firebase server, with sourcemaps",
+            "type": "chrome",
+            "request": "attach",
+            "url": "http://localhost:5000/*",
+            "port": 9222,
+            "sourceMaps": true,
+            "webRoot": "${workspaceRoot}"
+        }
+    ]
+}

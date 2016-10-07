@@ -1,0 +1,41 @@
+<header class="intro-header" style="background-image: url('assets/img/home.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="site-heading">
+                    <h1>Software Engineering</h1>
+                    <hr class="small">
+                    <span class="subheading"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8 blog-main" *ngIf="selectedArticle" [innerHTML]="selectedArticle.content">
+            </div>
+            <div class='col-sm-3 offset-sm-1 blog-sidebar'>
+                <div class="sidebar-module">
+                    <h4>Posts</h4>
+                    <ol class="list-unstyled"  *ngFor="let article of articles"
+                        [class.selected]="article === selectedArticle"
+                        (click)="onSelect(article)">
+                        <li>{{article.title}}</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<form (ngSubmit)="submitState(localState.value)" autocomplete="off">
+  <md-input [value]="localState.value"
+        (input)="localState.value = $event.target.value"
+        autofocus>
+    <md-placeholder>
+      <i class="material-icons app-input-icon md-18">android</i> Submit Local State to App State
+    </md-placeholder>
+  </md-input>
+  <button md-raised-button md-tooltip="Add value to local state!">Add Value</button>
+</form>
