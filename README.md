@@ -10,7 +10,16 @@ This repo was seeded by [angular2-webpack-starter] (https://github.com/AngularCl
 # clone our repo
 # --depth 1 removes all but one .git commit history
 git clone --depth 1 https://github.com/fyamada/angular2-firebase-blog.git
+```
 
 ### Firebase configuration
-You need to create your firebase account and project. Once you have a project, open it and select <b>Add Firebase to your web app<b> in the overview screen.
-This will pop up a panel with the configuration data you need to set in the /config/webpack.dev.js and /config/webpack.prod.js
+You need to create your Firebase account and project. Once you have a project, open it and select **Add Firebase to your web app** in the overview screen.
+This will pop up a panel with the configuration data you need to set the const **FIREBASE_CONFIG** in the webpack config files.
+
+Firebase configuration for development: 
+
+> /config/webpack.dev.js
+
+Firebase configuration for production:
+
+> /config/webpack.prod.js
