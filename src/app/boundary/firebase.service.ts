@@ -14,22 +14,11 @@ export class FirebaseService {
     dbPublishedArticlesReference: firebase.database.Reference;
     gsContentReference: firebase.storage.Reference;
     
-    /**
-     * Get the firebase project configuration data 
-     */
-    config = {
-      apiKey: "",
-      authDomain: "",
-      databaseURL: "",
-      storageBucket: "",
-      messagingSenderId: ""
-    };
-
     constructor (private http: Http) {
     }
 
     initializeApp():void {
-        this.app = firebase.initializeApp(this.config);
+        this.app = firebase.initializeApp(process.env.FIREBASE_CONFIG); // Set the firebase configuration in webpack.prod/dev files
         this.dbPublishedArticlesReference = firebase.database().ref('publishedArticles');
         this.gsContentReference = firebase.storage().ref().child('content');
     }

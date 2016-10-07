@@ -30,6 +30,17 @@ const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
   HMR: false
 });
 
+/**
+ * Get the firebase project configuration data for production
+ */
+const FIREBASE_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  storageBucket: "",
+  messagingSenderId: ""
+};
+
 module.exports = function(env) {
   return webpackMerge(commonConfig({env: ENV}), {
 
@@ -130,6 +141,7 @@ module.exports = function(env) {
           'ENV': JSON.stringify(METADATA.ENV),
           'NODE_ENV': JSON.stringify(METADATA.ENV),
           'HMR': METADATA.HMR,
+          'FIREBASE_CONFIG' : JSON.stringify(FIREBASE_CONFIG),
         }
       }),
 

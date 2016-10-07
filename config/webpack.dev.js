@@ -27,6 +27,18 @@ const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
 });
 
 /**
+ * Get the firebase project configuration data for development
+ */
+const FIREBASE_CONFIG = {
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  storageBucket: "",
+  messagingSenderId: ""
+};
+
+
+/**
  * Webpack configuration
  *
  * See: http://webpack.github.io/docs/configuration.html#cli
@@ -116,6 +128,7 @@ module.exports = function(options) {
           'ENV': JSON.stringify(METADATA.ENV),
           'NODE_ENV': JSON.stringify(METADATA.ENV),
           'HMR': METADATA.HMR,
+          'FIREBASE_CONFIG' : JSON.stringify(FIREBASE_CONFIG),
         }
       }),
 
