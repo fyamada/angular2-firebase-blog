@@ -21,7 +21,7 @@ const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin')
  */
 const HMR = helpers.hasProcessFlag('hot');
 const METADATA = {
-  title: 'Yamada',
+  title: 'Angular2 Firebase Blog',
   baseUrl: '/',
   isDevServer: helpers.isWebpackDevServer()
 };

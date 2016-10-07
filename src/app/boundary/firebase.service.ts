@@ -10,8 +10,17 @@ import 'rxjs/Rx';
 
 @Injectable()
 export class FirebaseService {
+    /**
+     * Firebase app reference
+     */
     app:any;
+    /**
+     * Real time database reference
+     */
     dbPublishedArticlesReference: firebase.database.Reference;
+    /**
+     * Storage reference
+     */
     gsContentReference: firebase.storage.Reference;
     
     constructor (private http: Http) {
@@ -35,27 +44,12 @@ export class FirebaseService {
                     .catch(this.handleErrorPromise);
     }
 
+    /**
+     * Fetch the download URL for the given a contentName. 
+     * This call was taking about 500ms to return the URL. 
+     */
     getContentUrl(contentName:string): firebase.Promise<any> {
         return this.gsContentReference.child(contentName).getDownloadURL();
-    }
-
-    private extractData(res: Response) {
-        if (res.status < 200 || res.status >= 300) {
-          throw new Error('Bad response status: ' + res.status);
-        }
-        var body = res.json();
-        if(body.notAuthenticated) {
-          throw new Error('Login timed out.');
-        }
-        return body || { };
-    }
-
-    private handleErrorObservable (error: any) {
-        // In a real world app, we might send the error to remote logging infrastructure
-        //alert("errMsg: " + JSON.stringify(error));
-        var errMsg = error.message || 'Server error';
-        console.error(errMsg); // log to console instead
-        return Observable.throw(errMsg);
     }
 
     private handleErrorPromise(error: any): Promise<any> {

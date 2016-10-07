@@ -19,23 +19,13 @@
             <div class='col-sm-3 offset-sm-1 blog-sidebar'>
                 <div class="sidebar-module">
                     <h4>Posts</h4>
-                    <ol class="list-unstyled"  *ngFor="let article of articles"
+                    <ol class="side-list">
+                        <li class="side-list" *ngFor="let article of articles"
                         [class.selected]="article === selectedArticle"
-                        (click)="onSelect(article)">
-                        <li>{{article.title}}</li>
+                        (click)="onSelect(article)">{{article.title}}</li>
                     </ol>
                 </div>
             </div>
         </div>
     </div>
 </body>
-<form (ngSubmit)="submitState(localState.value)" autocomplete="off">
-  <md-input [value]="localState.value"
-        (input)="localState.value = $event.target.value"
-        autofocus>
-    <md-placeholder>
-      <i class="material-icons app-input-icon md-18">android</i> Submit Local State to App State
-    </md-placeholder>
-  </md-input>
-  <button md-raised-button md-tooltip="Add value to local state!">Add Value</button>
-</form>

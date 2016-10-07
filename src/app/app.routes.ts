@@ -11,6 +11,7 @@ export const ROUTES: Routes = [
   { path: 'home',  component: Home },
   { path: 'article/:articleName',  component: Home },
   { path: 'about', component: About },
+  { path: 'posts', component: Home },
   {
     path: 'detail', loadChildren: () => System.import('./+detail')
   },

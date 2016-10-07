@@ -14,8 +14,7 @@ import { FirebaseService } from './boundary/firebase.service';
   selector: 'app',
   encapsulation: ViewEncapsulation.None,
   styleUrls: [
-    './app.style.css',
-    './clean-blog.css'
+    './app.style.css'
   ],
   template: `
   <nav class="navbar navbar-default navbar-custom navbar-fixed-top {{isfixed}} {{istransparent}}" *ngIf="showNav" aria-expanded="false">
@@ -26,23 +25,26 @@ import { FirebaseService } from './boundary/firebase.service';
                     <span class="sr-only">Toggle navigation</span>
                     <i class="fa fa-bars"></i>
                 </button>
-                <a class="navbar-brand" href="index.html">Fabio Yamada</a>
+                <a routerLink="/home" routerLinkActive="active" class="navbar-brand">
+                    <span><img src="assets/icon/android-icon-36x36.png"></span>
+                    {{brandText}}
+                </a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="index.html">Home</a>
+                        <a routerLink="/home" routerLinkActive="active">Home</a>
                     </li>
                     <li>
-                        <a href="about.html">About</a>
+                        <a href="/about">About</a>
                     </li>
                     <li>
-                        <a href="post.html">Sample Post</a>
+                        <a href="/posts">Posts</a>
                     </li>
                     <li>
-                        <a href="contact.html">Contact</a>
+                        <a href="/contact">Contact</a>
                     </li>
                 </ul>
             </div>
@@ -51,45 +53,21 @@ import { FirebaseService } from './boundary/firebase.service';
         <!-- /.container -->
   </nav>
   <router-outlet></router-outlet>
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <span class="app-action" [class.m2app-dark]="isDarkTheme">
-    <button md-fab><md-icon>check circle</md-icon></button>
-  </span>
-
-  <pre class="app-state">this.appState.state = {{ appState.state | json }}</pre>
-
   <footer>
-      <span>WebPack Angular 2 Starter by <a [href]="url">@AngularClass</a></span>
+      <span>Angular 2 Firebase Blog Starter by <a [href]="url">@fyamada</a></span>
       <div>
         <a [href]="url">
-          <img [src]="angularclassLogo" width="25%">
+          <img [src]="angularFirebaseLogo">
         </a>
       </div>
   </footer>
   `
 })
 export class App implements OnInit {
-  angularclassLogo = 'assets/img/angularclass-avatar.png';
-  name = 'Angular 2 Webpack Starter';
-  url = 'https://twitter.com/AngularClass';
+  angularFirebaseLogo = 'assets/img/angular2firebase-avatar.png';
+  name = 'Angular 2 Firebase Blog';
+  url = 'https://fabio-yamada.com';
+  brandText = 'Yamada';
   showNav : boolean;
   lastScrollTop : number;
   listenFunc: Function;
