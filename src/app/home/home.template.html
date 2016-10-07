@@ -21,8 +21,8 @@
                     <h4>Posts</h4>
                     <ol class="side-list">
                         <li class="side-list" *ngFor="let article of articles"
-                        [class.selected]="article === selectedArticle"
-                        (click)="onSelect(article)">{{article.title}}</li>
+                            [class.selected]="article === selectedArticle"
+                            (click)="onSelect(article)">{{article.title}}</li>
                     </ol>
                 </div>
             </div>
