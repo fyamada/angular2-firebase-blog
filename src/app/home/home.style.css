@@ -11,12 +11,9 @@ ol.side-list li:last-child {
  
 li.side-list {
     font: 200 20px/1.5 Helvetica, Verdana, sans-serif;
-    border-bottom: 1.5px solid dimgrey;
     text-decoration: none;
-    color: #000;
+    color: #515151;
     display: block;
-    width: 200px;
-    
     -webkit-transition: font-size 0.3s ease, background-color 0.3s ease;
     -moz-transition: font-size 0.3s ease, background-color 0.3s ease;
     -o-transition: font-size 0.3s ease, background-color 0.3s ease;
@@ -30,5 +27,4 @@ ol.side-list li.selected {
  
 ol.side-list li:hover {
   color:black;
-  text-decoration: underline;
 }

@@ -37,7 +37,7 @@ export class Home implements OnInit {
     public title: Title,
     public firebaseService: FirebaseService,
     private cdr:ChangeDetectorRef) {
-
+      
   }
 
   ngOnInit() {
@@ -79,7 +79,7 @@ export class Home implements OnInit {
        this.firebaseService.syncPublishedArticles(function(snapshot) {
          self.articles = [];
          snapshot.forEach(function(childSnapshot) {
-            if(self.articleName && childSnapshot.val().article === self.articleName) // If I do have the article name I must select the article with such name
+            if(self.articleName && childSnapshot.val().article === self.articleName) // If I do have the article name (from deep link url) I must select the article with such name
               self.selectedArticle = childSnapshot.val();
             else // otherwise select the first if not set, or leave the previously selected article unchanged
               self.selectedArticle = !self.selectedArticle ? childSnapshot.val() : self.selectedArticle;
@@ -93,4 +93,5 @@ export class Home implements OnInit {
     this.selectedArticle = article;
     this.router.navigate(['/article/' + article.article]);
   }
+
 }

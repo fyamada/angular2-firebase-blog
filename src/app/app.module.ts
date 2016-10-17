@@ -18,10 +18,10 @@ import { App } from './app.component';
 import { APP_RESOLVER_PROVIDERS } from './app.resolver';
 import { AppState, InteralStateType } from './app.service';
 import { Home } from './home';
+import { Posts } from './posts';
 import { About } from './about';
 import { NoContent } from './no-content';
 import { XLarge } from './home/x-large';
-import { AlertModule, DatepickerModule } from 'ng2-bootstrap/ng2-bootstrap';
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -45,6 +45,7 @@ type StoreType = {
     App,
     About,
     Home,
+    Posts,
     NoContent,
     XLarge
   ],
@@ -53,7 +54,6 @@ type StoreType = {
     BrowserModule,
     FormsModule,
     HttpModule,
-    AlertModule,
     RouterModule.forRoot(ROUTES, { useHash: true })
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection

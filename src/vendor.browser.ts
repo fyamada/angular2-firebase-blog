@@ -25,10 +25,6 @@ import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/mergeMap';
 import 'rxjs/add/operator/toPromise';
 
-// JQuery
-import 'jquery'
-import 'bootstrap-loader'; 
-
 //Firebase
 import 'firebase';
 

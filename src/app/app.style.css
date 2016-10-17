@@ -82,8 +82,16 @@ hr.small {
   .navbar-custom {
     background: #333333;
     opacity: 0.9;
-    border-bottom: 1px solid transparent;
+    border: none;
   }
+  .navbar-custom.is-fixed {
+    position: fixed;
+    top: 0px;
+    -webkit-transition: -webkit-transform 0.3s;
+    -moz-transition: -moz-transform 0.3s;
+    transition: transform 0.3s;
+  }
+
   .navbar-custom .navbar-brand {
     color: white;
     padding: 8px;

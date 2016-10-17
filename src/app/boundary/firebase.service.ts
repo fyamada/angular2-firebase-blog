@@ -13,15 +13,20 @@ export class FirebaseService {
     /**
      * Firebase app reference
      */
-    app:any;
+    private app:any;
     /**
      * Real time database reference
      */
-    dbPublishedArticlesReference: firebase.database.Reference;
+    private dbPublishedArticlesReference: firebase.database.Reference;
     /**
      * Storage reference
      */
-    gsContentReference: firebase.storage.Reference;
+    private gsContentReference: firebase.storage.Reference;
+    /**
+     * Firebase Auth user observable. Use the getUser function to 
+     * access this observable and subscribe to changes. 
+     */
+    private user: Observable<any>;
     
     constructor (private http: Http) {
     }
@@ -30,6 +35,12 @@ export class FirebaseService {
         this.app = firebase.initializeApp(process.env.FIREBASE_CONFIG); // Set the firebase configuration in webpack.prod/dev files
         this.dbPublishedArticlesReference = firebase.database().ref('publishedArticles');
         this.gsContentReference = firebase.storage().ref().child('content');
+        // Let's monitor the login state creating an observable. The logic of logged in/out is implemented in the subscriber
+        this.user = Observable.create((observer) => {
+            firebase.auth().onAuthStateChanged((user) => {
+                observer.next(user);
+            });
+        });
     }
 
     /**
@@ -77,4 +88,21 @@ export class FirebaseService {
         var dbPublishedArticlesReference = firebase.database().ref('publishedArticles');
         dbPublishedArticlesReference.on('value', callback);
     }
+
+    public signIn(): Promise<any> {
+        var provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/plus.login');
+        firebase.auth().signInWithRedirect(provider);
+        return firebase.auth().getRedirectResult();
+    }
+
+    public signOut(): Promise<any> {
+        return firebase.auth().signOut();
+    }
+
+    public getUser(): Observable<any> {
+        return this.user;
+    }
+
+
 }

@@ -1,10 +1,11 @@
 /*
  * Angular 2 decorators and services
  */
-import { Component, ViewEncapsulation, OnInit, Renderer } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit, Renderer, ChangeDetectorRef } from '@angular/core';
 
 import { AppState } from './app.service';
 import { FirebaseService } from './boundary/firebase.service';
+
 
 /*
  * App Component
@@ -17,11 +18,11 @@ import { FirebaseService } from './boundary/firebase.service';
     './app.style.css'
   ],
   template: `
-  <nav class="navbar navbar-default navbar-custom navbar-fixed-top {{isfixed}} {{istransparent}}" *ngIf="showNav" aria-expanded="false">
+  <nav class="navbar navbar-default navbar-custom {{isfixed}} {{istransparent}}" *ngIf="showNav" aria-expanded="false">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header page-scroll">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <button  (click)="isCollapsed = !isCollapsed" type="button" class="navbar-toggle collapsed">
                     <span class="sr-only">Toggle navigation</span>
                     <i class="fa fa-bars"></i>
                 </button>
@@ -32,19 +33,23 @@ import { FirebaseService } from './boundary/firebase.service';
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1"
+            [attr.aria-expanded]="!isCollapsed" [ngClass]="{collapse: isCollapsed}">
+                <ul class="nav navbar-nav navbar-right" (click)="isCollapsed = !isCollapsed">
                     <li>
                         <a routerLink="/home" routerLinkActive="active">Home</a>
                     </li>
                     <li>
-                        <a href="/about">About</a>
+                        <a routerLink="/about" routerLinkActive="active">About</a>
                     </li>
                     <li>
-                        <a href="/posts">Posts</a>
+                        <a routerLink="/posts" routerLinkActive="active">Posts</a>
                     </li>
                     <li>
-                        <a href="/contact">Contact</a>
+                        <a routerLink="/contact" routerLinkActive="active">Contact</a>
+                    </li>
+                    <li>
+                        <a (click)="loginLogout()">{{loginLogoutLabel}}</a>
                     </li>
                 </ul>
             </div>
@@ -64,63 +69,81 @@ import { FirebaseService } from './boundary/firebase.service';
   `
 })
 export class App implements OnInit {
-  angularFirebaseLogo = 'assets/img/angular2firebase-avatar.png';
-  name = 'Angular 2 Firebase Blog';
-  url = 'https://fabio-yamada.com';
-  brandText = 'Yamada';
-  showNav : boolean;
-  lastScrollTop : number;
-  listenFunc: Function;
-  preventNavHide : boolean;
-  istransparent: string = "";
-  isfixed: string = "";
+    angularFirebaseLogo = 'assets/img/angular2firebase-avatar.png';
+    name = 'Angular 2 Firebase Blog';
+    url = 'https://fabio-yamada.com';
+    brandText = 'Yamada';
+    showNav : boolean;
+    lastScrollTop : number;
+    listenFunc: Function;
+    preventNavHide : boolean;
+    isCollapsed : boolean = true;
+    istransparent: string = "";
+    isfixed: string = "";
+    user:any;
+    loginLogoutLabel: string = "Login";
 
-  constructor(
-    private renderer: Renderer,
-    public appState: AppState,
-    public firebaseService: FirebaseService) {
-      this.showNav = true;
-      firebaseService.initializeApp();
-
-  }
-
-  ngOnInit() {
-    console.log('Initial App State', this.appState.state);
-    this.listenFunc = this.renderer.listenGlobal('window', 'scroll', (event : any) => {
-            var st = event.currentTarget.pageYOffset;
-            if(!this.lastScrollTop)
-                this.lastScrollTop = 0;
-            if (st > this.lastScrollTop && !this.preventNavHide){
-                this.showNav = false;
-            } else {
-               this.showNav = true;
-               st <= 0 ? this.istransparent = "" : this.istransparent = "is-transparent";
-               st <= 0 ? this.isfixed = "" : this.isfixed = "is-fixed";
-            }
-            this.lastScrollTop = st;
-        });     
-  }
-
-  onScroll(evt: any) {
-        var st = evt.currentTarget.pageYOffset;
-        if(!this.lastScrollTop)
-            this.lastScrollTop = 0;
-        if (st > this.lastScrollTop){
-            // downscroll code
-            console.log('down');
-        } else {
-           // upscroll code
-        console.log('up');
-        }
-        this.lastScrollTop = st;
+    constructor(
+        private renderer: Renderer,
+        public appState: AppState,
+        public firebaseService: FirebaseService,
+        private cdr:ChangeDetectorRef) {
+        this.showNav = true;
+        firebaseService.initializeApp();
     }
 
+    ngOnInit() {
+        // Hook listener to display/hide navbar
+        this.listenFunc = this.renderer.listenGlobal('window', 'scroll', (event : any) => {
+                var st = event.currentTarget.pageYOffset;
+                if(!this.lastScrollTop)
+                    this.lastScrollTop = 0;
+                if (st > this.lastScrollTop && !this.preventNavHide){
+                    this.showNav = false;
+                } else {
+                this.showNav = true;
+                this.istransparent = (st <= 0 ?  "" : "is-transparent");
+                this.isfixed = (st <= 0 ?  "" : "is-fixed");
+                }
+                this.lastScrollTop = st;
+            }); 
+        // Observe the auth user state
+        this.firebaseService.getUser().subscribe((user) => {
+            this.user = user;
+            this.loginLogoutLabel = user ? "Logout" : "Login";
+            this.cdr.detectChanges();
+        });    
+    }
+    
+    loginLogout() {
+        if(this.user) {
+            this.firebaseService.signOut().then(function() {
+                // Sign-out successful.
+                }, function(error) {
+                // An error happened.
+                }
+            );
+        } else {
+            this.firebaseService.signIn().then(function(result) {
+                if (result.credential) {
+                    // This gives you a Google Access Token. You can use it to access the Google API.
+                    var token = result.credential.accessToken;
+                    // ...
+                }
+                // The signed-in user info.
+                this.user = result.user;
+                // ...
+            }).catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+            // ...
+            });
+        }
+        
+    }   
 }
-
-/*
- * Please review the https://github.com/AngularClass/angular2-examples/ repo for
- * more angular app examples that you may copy/paste
- * (The examples may not be updated as quickly. Please open an issue on github for us to update it)
- * For help or questions please contact us at @AngularClass on twitter
- * or our chat on Slack at https://AngularClass.com/slack-join
- */
