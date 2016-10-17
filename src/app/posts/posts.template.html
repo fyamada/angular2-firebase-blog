@@ -1,0 +1,27 @@
+<header class="intro-header" style="background-image: url('assets/img/posts.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="site-heading">
+                    <h1>Posts List</h1>
+                    <hr class="small">
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class='col-sm-12 offset-sm-1'>
+                <h4>Posts</h4>
+                <div class="posts-list-item" *ngFor="let article of articles"
+                        (click)="onSelect(article)">
+                    <div class="post-title">{{article.title}}</div>
+                    <div class="post-date">{{article.timestamp}}</div>
+                    <div class="post-summary">{{article.summary}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
