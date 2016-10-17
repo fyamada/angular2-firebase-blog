@@ -56,6 +56,17 @@ export class FirebaseService {
     }
 
     /**
+     * Fetch article content given the articleName
+     */
+    getArticleContent(articleName : string): Promise<any> {
+        var dbPublishedArticlesReference = firebase.database().ref('publishedArticles/'+articleName+'/content');
+        return dbPublishedArticlesReference.once('value');
+       /* return new Promise(function(resolve, reject) {
+            dbPublishedArticlesReference.on('value', resolve);
+        }); */
+    }
+
+    /**
      * Fetch the download URL for the given a contentName. 
      * This call was taking about 500ms to return the URL. 
      */

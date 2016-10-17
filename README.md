@@ -1,6 +1,6 @@
 # Angular2 Firebase Blog
 
-### !! This project is under construction and maybe not fully functional !!
+### Attention: This project is under construction and have not been released yet.
 
 ### Personal web blog seed project based on [Angular 2](https://angular.io) and [Firebase](https://firebase.google.com/) 
 

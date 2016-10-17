@@ -42,8 +42,9 @@ export class Home implements OnInit {
 
   ngOnInit() {
     this.route.params.forEach((params: Params) => {
-        this.articleName = params['articleName'];
-      });
+      this.articleName = params['articleName'];
+      this.getContentFromRealtimeDatabase(this.articleName);
+    });
     
     this.syncPublishedArticles();
   }
@@ -55,10 +56,10 @@ export class Home implements OnInit {
     this.localState.value = '';
   }
 
-  getContent(articleName:string) {
+  getContentFromStorage(articleName:string) {
     var service = this.firebaseService;
     service
-      .getContentUrl(articleName ? articleName : 'article_test.html')
+      .getContentUrl(articleName ? articleName : 'article_test')
       .then( (url) => {
         return service.getContentData(url);
       })
@@ -67,26 +68,42 @@ export class Home implements OnInit {
         this.cdr.detectChanges();
       });
   }
-
+  getContentFromRealtimeDatabase(articleName:string) {
+    var service = this.firebaseService;
+    var self = this; // Preserve context to the promise/callback
+    service
+      .getArticleContent(articleName ? articleName : 'article_test')
+      .then(snapshot => {
+        if(snapshot.val()) {
+          self.content = snapshot.val();
+        } else {
+          self.content = "<div class='alert alert-danger full-width'>The article <code>"+self.articleName+"</code> was not found.</div>";
+        }
+        self.cdr.detectChanges();
+      });
+  }
   syncPublishedArticles() {
     var self = this; // Preserve context to the promise/callback
-  /*  this.firebaseService.syncOncePublishedArticles()
-      .then(snapshot => {
-          snapshot.forEach(function(childSnapshot) {
-            self.articles.push(childSnapshot.val());
-          });
-      }); */
-       this.firebaseService.syncPublishedArticles(function(snapshot) {
-         self.articles = [];
-         snapshot.forEach(function(childSnapshot) {
-            if(self.articleName && childSnapshot.val().article === self.articleName) // If I do have the article name (from deep link url) I must select the article with such name
-              self.selectedArticle = childSnapshot.val();
-            else // otherwise select the first if not set, or leave the previously selected article unchanged
-              self.selectedArticle = !self.selectedArticle ? childSnapshot.val() : self.selectedArticle;
-            self.articles.push(childSnapshot.val());
-          });
-          self.cdr.detectChanges();
-       });
+    this.firebaseService.syncPublishedArticles(function(snapshot) {
+      self.articles = [];
+      let found: boolean = false;
+      snapshot.forEach(function(childSnapshot) {
+        if(self.articleName && childSnapshot.val().article === self.articleName) { // If I do have the article name (from deep link url) I must select the article with such name
+          self.selectedArticle = childSnapshot.val();
+          found = true;
+        } else if(!self.selectedArticle) { // otherwise select the first if not set, or leave the previously selected article unchanged
+          self.selectedArticle = childSnapshot.val();
+        }
+        self.articles.push(childSnapshot.val());
+      });
+      if(!found) {
+        if(self.articleName) // If I do have an article name, it means someone is looking for a specific article not found
+          self.content = "<div class='alert alert-danger full-width'>The article <code>"+self.articleName+"</code> was not found.</div>";
+        else // just route to the default article allowing deep linking
+          self.router.navigate(['/article/' + self.selectedArticle.article]); // Allow deep linking to the automatic article loaded
+      }
+      self.cdr.detectChanges();
+    });
   }
 
   onSelect(article: Article) {
