@@ -4,7 +4,7 @@ import{ Router} from '@angular/router';
 import { FirebaseService } from '../boundary/firebase.service';
 
 //Entities
-import { Article } from '../entity/article';
+import { Post } from '../entity/post';
 
 @Component({
   // The selector is what angular internally uses
@@ -20,8 +20,8 @@ export class Posts implements OnInit {
   // Set our default values
   localState = { value: '' };
   content:String = '';
-  articles: Article[] = [];
-  selectedArticle: Article;
+  posts: Post[] = [];
+  selectedArticle: Post;
   articleName: string;
   // TypeScript public modifiers
   constructor(
@@ -37,16 +37,16 @@ export class Posts implements OnInit {
 
   syncPublishedArticles() {
     var self = this; // Preserve context to the promise/callback
-    this.firebaseService.syncPublishedArticles(function(snapshot) {
-        self.articles = [];
+    this.firebaseService.syncPublishedPosts(function(snapshot) {
+        self.posts = [];
         snapshot.forEach(function(childSnapshot) {
-            self.articles.push(childSnapshot.val());
+            self.posts.push(childSnapshot.val());
         });
         self.cdr.detectChanges();
     });
   }
 
-  onSelect(article: Article) {
-    this.router.navigate(['/article/' + article.article]);
+  onSelect(post: Post) {
+    this.router.navigate(['/post/' + post.contentKey]);
   }
 }

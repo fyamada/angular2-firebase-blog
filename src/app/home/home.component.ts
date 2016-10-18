@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef  } from '@angular/core';
+import { Location  } from '@angular/common';
 import{ActivatedRoute, Params, Router} from '@angular/router';
 
 import { AppState } from '../app.service';
@@ -7,7 +8,7 @@ import { Title } from './title';
 import { XLarge } from './x-large';
 
 //Entities
-import { Article } from '../entity/article';
+import { Post } from '../entity/post';
 
 @Component({
   // The selector is what angular internally uses
@@ -27,12 +28,14 @@ export class Home implements OnInit {
   // Set our default values
   localState = { value: '' };
   content:String = '';
-  articles: Article[] = [];
-  selectedArticle: Article;
-  articleName: string;
+  posts: Post[] = [];
+  selectedPost: Post;
+  contentKey: string;
+  postName: string;
   // TypeScript public modifiers
   constructor(public appState: AppState, 
     private router: Router,
+    private location: Location,
     public route: ActivatedRoute,
     public title: Title,
     public firebaseService: FirebaseService,
@@ -42,11 +45,19 @@ export class Home implements OnInit {
 
   ngOnInit() {
     this.route.params.forEach((params: Params) => {
-      this.articleName = params['articleName'];
-      this.getContentFromRealtimeDatabase(this.articleName);
+      this.contentKey = params['contentKey'];
+      this.postName = params['postName'];
+      if(this.selectedPost && this.selectedPost.content) { // Check if I already have this content loaded from db
+        this.content = this.selectedPost.content
+        if(!this.postName) {
+          this.postName = this.selectedPost.name
+          this.location.go(this.location.path() + "/" + this.postName);
+        }
+      } else
+        this.getContentFromRealtimeDatabase(this.contentKey);
     });
     
-    this.syncPublishedArticles();
+    this.syncPublishedPosts();
   }
 
   submitState(value: string) {
@@ -56,59 +67,68 @@ export class Home implements OnInit {
     this.localState.value = '';
   }
 
-  getContentFromStorage(articleName:string) {
+  getContentFromStorage(contentKey:string) {
     var service = this.firebaseService;
     service
-      .getContentUrl(articleName ? articleName : 'article_test')
+      .getPostContentStorageDownloadUrl(contentKey)
       .then( (url) => {
-        return service.getContentData(url);
+        return service.getPostContentFromStorage(url);
       })
       .then(data => {
         this.content = data;
         this.cdr.detectChanges();
       });
   }
-  getContentFromRealtimeDatabase(articleName:string) {
+  getContentFromRealtimeDatabase(contentKey:string) {
     var service = this.firebaseService;
     var self = this; // Preserve context to the promise/callback
     service
-      .getArticleContent(articleName ? articleName : 'article_test')
+      .getPostContent(contentKey)
       .then(snapshot => {
         if(snapshot.val()) {
           self.content = snapshot.val();
+          self.selectedPost.content = self.content as string;
         } else {
-          self.content = "<div class='alert alert-danger full-width'>The article <code>"+self.articleName+"</code> was not found.</div>";
+          self.content = "<div class='alert alert-danger full-width'>The post <code>"+self.contentKey+"</code> was not found.</div>";
         }
         self.cdr.detectChanges();
       });
   }
-  syncPublishedArticles() {
+  syncPublishedPosts() {
     var self = this; // Preserve context to the promise/callback
-    this.firebaseService.syncPublishedArticles(function(snapshot) {
-      self.articles = [];
+    this.firebaseService.syncPublishedPosts(function(snapshot) {
+      self.posts = [];
       let found: boolean = false;
+      var post: Post;
       snapshot.forEach(function(childSnapshot) {
-        if(self.articleName && childSnapshot.val().article === self.articleName) { // If I do have the article name (from deep link url) I must select the article with such name
-          self.selectedArticle = childSnapshot.val();
+        post = childSnapshot.val();
+        if(self.contentKey && post.contentKey === self.contentKey) { // If I do have the post content key (from deep link url) I must select the post with such key
+          self.selectedPost = post;
           found = true;
-        } else if(!self.selectedArticle) { // otherwise select the first if not set, or leave the previously selected article unchanged
-          self.selectedArticle = childSnapshot.val();
+        } else if(!self.selectedPost) { // otherwise select the first if not set, or leave the previously selected post unchanged
+          self.selectedPost = post;
         }
-        self.articles.push(childSnapshot.val());
+        self.posts.push(post);
       });
       if(!found) {
-        if(self.articleName) // If I do have an article name, it means someone is looking for a specific article not found
-          self.content = "<div class='alert alert-danger full-width'>The article <code>"+self.articleName+"</code> was not found.</div>";
-        else // just route to the default article allowing deep linking
-          self.router.navigate(['/article/' + self.selectedArticle.article]); // Allow deep linking to the automatic article loaded
+        if(self.contentKey) // If I do have an post name, it means someone is looking for a specific post not found
+          self.content = "<div class='alert alert-danger full-width'>The post <code>"+self.contentKey+"</code> was not found.</div>";
+        else if(self.selectedPost)// just route to the default post allowing deep linking
+          self.router.navigate(['/post/' + self.selectedPost.contentKey]); // Allow deep linking to the automatic post loaded
+      }
+      if(self.selectedPost) {
+        if(!self.postName) {
+          self.postName = self.selectedPost.name
+          self.location.go(self.location.path() + "/" + self.postName);
+        }
       }
       self.cdr.detectChanges();
     });
   }
 
-  onSelect(article: Article) {
-    this.selectedArticle = article;
-    this.router.navigate(['/article/' + article.article]);
+  onSelect(post: Post) {
+    this.selectedPost = post;
+    this.router.navigate(['/post/' + post.contentKey]);
   }
 
 }

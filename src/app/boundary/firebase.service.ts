@@ -17,7 +17,7 @@ export class FirebaseService {
     /**
      * Real time database reference
      */
-    private dbPublishedArticlesReference: firebase.database.Reference;
+    private dbPublishedPostsReference: firebase.database.Reference;
     /**
      * Storage reference
      */
@@ -33,7 +33,7 @@ export class FirebaseService {
 
     initializeApp():void {
         this.app = firebase.initializeApp(process.env.FIREBASE_CONFIG); // Set the firebase configuration in webpack.prod/dev files
-        this.dbPublishedArticlesReference = firebase.database().ref('publishedArticles');
+        this.dbPublishedPostsReference = firebase.database().ref('publishedPosts');
         this.gsContentReference = firebase.storage().ref().child('content');
         // Let's monitor the login state creating an observable. The logic of logged in/out is implemented in the subscriber
         this.user = Observable.create((observer) => {
@@ -48,7 +48,7 @@ export class FirebaseService {
      * For this to work, the firebase sotrage bucket need to be set to accept CORS.
      * http://stackoverflow.com/questions/37760695/firebase-storage-and-access-control-allow-origin  
      */
-    getContentData(url : string): Promise<string> {
+    getPostContentFromStorage(url : string): Promise<string> {
         return this.http.get(url)
                     .toPromise()
                     .then(res => res.text())
@@ -56,22 +56,19 @@ export class FirebaseService {
     }
 
     /**
-     * Fetch article content given the articleName
+     * Fetch post content given the articleName
      */
-    getArticleContent(articleName : string): Promise<any> {
-        var dbPublishedArticlesReference = firebase.database().ref('publishedArticles/'+articleName+'/content');
-        return dbPublishedArticlesReference.once('value');
-       /* return new Promise(function(resolve, reject) {
-            dbPublishedArticlesReference.on('value', resolve);
-        }); */
+    getPostContent(contentKey : string): Promise<any> {
+        var dbPublishedPostsReference = firebase.database().ref('postContent/'+contentKey);
+        return dbPublishedPostsReference.once('value');
     }
 
     /**
      * Fetch the download URL for the given a contentName. 
      * This call was taking about 500ms to return the URL. 
      */
-    getContentUrl(contentName:string): firebase.Promise<any> {
-        return this.gsContentReference.child(contentName).getDownloadURL();
+    getPostContentStorageDownloadUrl(contentKey:string): firebase.Promise<any> {
+        return this.gsContentReference.child(contentKey).getDownloadURL();
     }
 
     private handleErrorPromise(error: any): Promise<any> {
@@ -84,10 +81,10 @@ export class FirebaseService {
      * The type of Promise is firebase.database.DataSnapshot. 
      * We let any to not require the import of firebase library in the caller.
      */
-    public syncOncePublishedArticles(): Promise<any> {
-        var dbPublishedArticlesReference = this.dbPublishedArticlesReference;
+    public syncOncePublishedPosts(): Promise<any> {
+        var dbPublishedPostsReference = this.dbPublishedPostsReference;
         return new Promise(function(resolve, reject) {
-            dbPublishedArticlesReference.on('value', resolve);
+            dbPublishedPostsReference.on('value', resolve);
         });
         
     }
@@ -95,9 +92,9 @@ export class FirebaseService {
     /**
      * Bind the callback to the value event listener.
      */
-    public syncPublishedArticles(callback) {
-        var dbPublishedArticlesReference = firebase.database().ref('publishedArticles');
-        dbPublishedArticlesReference.on('value', callback);
+    public syncPublishedPosts(callback) {
+        var dbPublishedPostsReference = firebase.database().ref('publishedPosts');
+        dbPublishedPostsReference.on('value', callback);
     }
 
     public signIn(): Promise<any> {

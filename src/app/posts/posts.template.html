@@ -15,11 +15,11 @@
         <div class="row">
             <div class='col-sm-12 offset-sm-1'>
                 <h4>Posts</h4>
-                <div class="posts-list-item" *ngFor="let article of articles"
-                        (click)="onSelect(article)">
-                    <div class="post-title">{{article.title}}</div>
-                    <div class="post-date">{{article.timestamp}}</div>
-                    <div class="post-summary">{{article.summary}}</div>
+                <div class="posts-list-item" *ngFor="let post of posts"
+                        (click)="onSelect(post)">
+                    <div class="post-title">{{post.title}}</div>
+                    <div class="post-date">{{post.timestamp}}</div>
+                    <div class="post-summary">{{post.summary}}</div>
                 </div>
             </div>
         </div>
