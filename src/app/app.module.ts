@@ -20,8 +20,8 @@ import { AppState, InteralStateType } from './app.service';
 import { Home } from './home';
 import { Posts } from './posts';
 import { About } from './about';
+import { Contact } from './contact';
 import { NoContent } from './no-content';
-import { XLarge } from './home/x-large';
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -44,10 +44,10 @@ type StoreType = {
   declarations: [
     App,
     About,
+    Contact,
     Home,
     Posts,
-    NoContent,
-    XLarge
+    NoContent
   ],
   imports: [ // import Angular's modules
     MaterialModule.forRoot(),

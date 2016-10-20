@@ -13,7 +13,6 @@ import { MockBackend } from '@angular/http/testing';
 // Load the implementations that should be tested
 import { AppState } from '../app.service';
 import { Home } from './home.component';
-import { Title } from './title';
 
 describe('Home', () => {
   // provide our implementations or mocks to the dependency injector
@@ -29,7 +28,6 @@ describe('Home', () => {
         deps: [MockBackend, BaseRequestOptions]
       },
       AppState,
-      Title,
       Home
     ]
   }));
@@ -39,7 +37,7 @@ describe('Home', () => {
   }));
 
   it('should have a title', inject([ Home ], (home: Home) => {
-    expect(!!home.title).toEqual(true);
+    expect(!!home.content).toEqual(true);
   }));
 
   it('should log ngOnInit', inject([ Home ], (home: Home) => {

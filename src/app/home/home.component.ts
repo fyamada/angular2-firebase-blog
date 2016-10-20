@@ -4,9 +4,6 @@ import{ActivatedRoute, Params, Router} from '@angular/router';
 
 import { AppState } from '../app.service';
 import { FirebaseService } from '../boundary/firebase.service';
-import { Title } from './title';
-import { XLarge } from './x-large';
-
 //Entities
 import { Post } from '../entity/post';
 
@@ -17,7 +14,6 @@ import { Post } from '../entity/post';
   selector: 'home',  // <home></home>
   // We need to tell Angular's Dependency Injection which providers are in our app.
   providers: [
-    Title
   ],
   // Our list of styles in our component. We may add more to compose many styles together
   styleUrls: [ './home.style.css' ],
@@ -37,24 +33,25 @@ export class Home implements OnInit {
     private router: Router,
     private location: Location,
     public route: ActivatedRoute,
-    public title: Title,
     public firebaseService: FirebaseService,
     private cdr:ChangeDetectorRef) {
       
   }
 
   ngOnInit() {
+    let self = this;
     this.route.params.forEach((params: Params) => {
-      this.contentKey = params['contentKey'];
-      this.postName = params['postName'];
-      if(this.selectedPost && this.selectedPost.content) { // Check if I already have this content loaded from db
-        this.content = this.selectedPost.content
-        if(!this.postName) {
-          this.postName = this.selectedPost.name
-          this.location.go(this.location.path() + "/" + this.postName);
+      self.contentKey = params['contentKey'];
+      self.postName = params['postName'];
+      if(self.selectedPost && self.selectedPost.content) { // Check if I already have this content loaded from db
+        self.content = self.selectedPost.content
+        if(!self.postName) {
+          self.postName = self.selectedPost.name
+          self.location.go(self.location.path() + "/" + self.postName);
         }
-      } else
-        this.getContentFromRealtimeDatabase(this.contentKey);
+      } else {
+        self.getContentFromRealtimeDatabase(self.contentKey);
+      }
     });
     
     this.syncPublishedPosts();
@@ -85,14 +82,17 @@ export class Home implements OnInit {
     service
       .getPostContent(contentKey)
       .then(snapshot => {
-        if(snapshot.val()) {
-          self.content = snapshot.val();
-          self.selectedPost.content = self.content as string;
-        } else {
-          self.content = "<div class='alert alert-danger full-width'>The post <code>"+self.contentKey+"</code> was not found.</div>";
-        }
-        self.cdr.detectChanges();
-      });
+          if(snapshot.val()) {
+            self.content = snapshot.val();
+            if(self.selectedPost)
+              self.selectedPost.content = self.content as string;
+          } else {
+            self.content = "<div class='alert alert-danger full-width'>The post <code>"+self.contentKey+"</code> was not found.</div>";
+          }
+          self.cdr.detectChanges();
+        }, error => {
+          self.content = "<div class='alert alert-danger full-width'>The post <code>"+self.contentKey+"</code> could not be accessed. "+ error+"</div>";
+        });
   }
   syncPublishedPosts() {
     var self = this; // Preserve context to the promise/callback

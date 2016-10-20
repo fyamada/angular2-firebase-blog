@@ -64,6 +64,20 @@ export class FirebaseService {
     }
 
     /**
+     * Fetch about content.
+     */
+    getAboutContent(): Promise<any> {
+        return firebase.database().ref('aboutContent').once('value');
+    }
+
+    /**
+     * Fetch no content content.
+     */
+    getNoContent(): Promise<any> {
+        return firebase.database().ref('noContent').once('value');
+    }
+
+    /**
      * Fetch the download URL for the given a contentName. 
      * This call was taking about 500ms to return the URL. 
      */

@@ -1,65 +1,57 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-/*
- * We're loading this component asynchronously
- * We are using some magic with es6-promise-loader that will wrap the module with a Promise
- * see https://github.com/gdi2290/es6-promise-loader for more info
- */
-
-console.log('`About` component loaded asynchronously');
+import { Component, ChangeDetectorRef } from '@angular/core';
+import { FirebaseService } from '../boundary/firebase.service';
 
 @Component({
   selector: 'about',
   styles: [`
   `],
   template: `
-    <h1>About</h1>
-    <div>
-      For hot module reloading run
-      <pre>npm run start:hmr</pre>
-    </div>
-    <div>
-      <h3>
-        patrick@AngularClass.com
-      </h3>
-    </div>
-    <pre>this.localState = {{ localState | json }}</pre>
+    <header class="intro-header" style="background-image: url('assets/img/about.jpg')">
+      <div class="container">
+          <div class="row">
+              <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <div class="site-heading">
+                  </div>
+              </div>
+          </div>
+      </div>
+    </header>
+    <body>    
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8 blog-main" *ngIf="content" [innerHTML]="content">
+                </div>
+            </div>
+        </div>
+    </body>
   `
 })
 export class About {
+  content: string = '';
   localState: any;
-  constructor(public route: ActivatedRoute) {
+  constructor(public firebaseService: FirebaseService,
+    private cdr:ChangeDetectorRef) {
 
   }
 
   ngOnInit() {
-    this.route
-      .data
-      .subscribe((data: any) => {
-        // your resolved data from route
-        this.localState = data.yourData;
-      });
-
-    console.log('hello `About` component');
-    // static data that is bundled
-    // var mockData = require('assets/mock-data/mock-data.json');
-    // console.log('mockData', mockData);
-    // if you're working with mock data you can also use http.get('assets/mock-data/mock-data.json')
-    this.asyncDataWithWebpack();
+    this.getContentFromRealtimeDatabase();
   }
-  asyncDataWithWebpack() {
-    // you can also async load mock data with 'es6-promise-loader'
-    // you would do this if you don't want the mock-data bundled
-    // remember that 'es6-promise-loader' is a promise
-    setTimeout(() => {
 
-      System.import('../../assets/mock-data/mock-data.json')
-        .then(json => {
-          console.log('async mockData', json);
-          this.localState = json;
+  getContentFromRealtimeDatabase() {
+    var service = this.firebaseService;
+    var self = this; // Preserve context to the promise/callback
+    service
+      .getAboutContent()
+      .then(snapshot => {
+          if(snapshot.val()) {
+            self.content = snapshot.val();
+          } else {
+            self.content = "<div class='alert alert-danger full-width'>About content was not found.</div>";
+          }
+          self.cdr.detectChanges();
+        }, error => {
+          self.content = "<div class='alert alert-danger full-width'>About content was not found. "+ error+"</div>";
         });
-
-    });
   }
-
 }
