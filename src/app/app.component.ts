@@ -1,7 +1,7 @@
 /*
  * Angular 2 decorators and services
  */
-import { Component, ViewEncapsulation, OnInit, Renderer, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit, Renderer } from '@angular/core';
 
 import { AppState } from './app.service';
 import { FirebaseService } from './boundary/firebase.service';
@@ -86,8 +86,7 @@ export class App implements OnInit {
     constructor(
         private renderer: Renderer,
         public appState: AppState,
-        public firebaseService: FirebaseService,
-        private cdr:ChangeDetectorRef) {
+        public firebaseService: FirebaseService) {
         this.showNav = true;
         firebaseService.initializeApp();
     }
@@ -108,10 +107,10 @@ export class App implements OnInit {
                 this.lastScrollTop = st;
             }); 
         // Observe the auth user state
+        var self = this; // Preserve context to the promise/callback
         this.firebaseService.getUser().subscribe((user) => {
-            this.user = user;
-            this.loginLogoutLabel = user ? "Logout" : "Login";
-            this.cdr.detectChanges();
+            self.user = user;
+            self.loginLogoutLabel = user ? "Logout" : "Login";
             if (user != null) {
                 user.providerData.forEach(function (profile) {
                     console.log("Sign-in provider: "+profile.providerId);

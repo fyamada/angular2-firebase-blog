@@ -28,6 +28,7 @@ export class Home implements OnInit {
   selectedPost: Post;
   contentKey: string;
   postName: string;
+  
   // TypeScript public modifiers
   constructor(public appState: AppState, 
     private router: Router,
@@ -39,23 +40,28 @@ export class Home implements OnInit {
   }
 
   ngOnInit() {
-    let self = this;
-    this.route.params.forEach((params: Params) => {
-      self.contentKey = params['contentKey'];
-      self.postName = params['postName'];
-      if(self.selectedPost && self.selectedPost.content) { // Check if I already have this content loaded from db
-        self.content = self.selectedPost.content
-        if(!self.postName) {
-          self.postName = self.selectedPost.name
-          self.location.go(self.location.path() + "/" + self.postName);
-        }
-      } else {
-        self.getContentFromRealtimeDatabase(self.contentKey);
+    // Observe the params. When user select another post, the route with new params will trigger the observable
+    this.route.params.subscribe(params => {
+      this.contentKey = params['contentKey'];
+      this.postName = params['postName'];
+      // If I dont have the post name, check if already have this post loaded in memory
+      if(!this.postName) { 
+        let found = this.posts.some(post => {
+          if(this.contentKey && post.contentKey === this.contentKey) { // If I do have the post content key I must select the post with such key
+            this.postName = this.selectedPost.name;
+            return true;
+          }
+        });
+        if(found)
+          this.location.go(this.location.path() + "/" + this.postName);
       }
+      // The post content is not keep in memory, so lets retrieve it from db
+      this.getContentFromRealtimeDatabase(this.contentKey);
     });
     
     this.syncPublishedPosts();
   }
+  
 
   submitState(value: string) {
     console.log('submitState', value);

@@ -27,7 +27,8 @@ export class Posts implements OnInit {
   constructor(
     private router: Router,
     public firebaseService: FirebaseService,
-    private cdr:ChangeDetectorRef) {
+    private cdr:ChangeDetectorRef
+    ) {
 
   }
 

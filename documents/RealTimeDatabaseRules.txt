@@ -1,0 +1,15 @@
+{
+  "rules": {
+      ".read": "auth != null",
+      ".write": "root.child('admins').hasChild(auth.uid)",
+      "publishedPosts": {
+        ".read": "true"
+      },
+      "postContent": {
+        "$postContentId": {
+            ".read": "root.child('publicContent').hasChild($postContentId)"
+          }
+      }
+    
+  }
+}

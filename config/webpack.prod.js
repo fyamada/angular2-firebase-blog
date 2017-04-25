@@ -34,11 +34,11 @@ const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
  * Get the firebase project configuration data for production
  */
 const FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  databaseURL: "",
-  storageBucket: "",
-  messagingSenderId: ""
+  apiKey: "AIzaSyAGIYmdkWSR7z_mM-EpuCw3qssicWrMyDo",
+  authDomain: "fabio-yamada.firebaseapp.com",
+  databaseURL: "https://fabio-yamada.firebaseio.com",
+  storageBucket: "fabio-yamada.appspot.com",
+  messagingSenderId: "74006633477"
 };
 
 module.exports = function(env) {

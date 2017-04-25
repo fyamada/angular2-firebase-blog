@@ -93,7 +93,7 @@ export class FirebaseService {
     /**
      * Return the promise for the value event listener. This function works only once.
      * The type of Promise is firebase.database.DataSnapshot. 
-     * We let any to not require the import of firebase library in the caller.
+     * We let any to do not require the import of firebase library in the caller.
      */
     public syncOncePublishedPosts(): Promise<any> {
         var dbPublishedPostsReference = this.dbPublishedPostsReference;

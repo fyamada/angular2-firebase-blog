@@ -16,7 +16,7 @@ const NamedModulesPlugin = require('webpack/lib/NamedModulesPlugin');
  * Webpack Constants
  */
 const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
-const HOST = process.env.HOST || '192.168.1.103';
+const HOST = process.env.HOST || '127.0.0.1';
 const PORT = process.env.PORT || 3000;
 const HMR = helpers.hasProcessFlag('hot');
 const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
@@ -30,11 +30,11 @@ const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
  * Get the firebase project configuration data for development
  */
 const FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  databaseURL: "",
-  storageBucket: "",
-  messagingSenderId: ""
+  apiKey: "AIzaSyAGIYmdkWSR7z_mM-EpuCw3qssicWrMyDo",
+  authDomain: "fabio-yamada.firebaseapp.com",
+  databaseURL: "https://fabio-yamada.firebaseio.com",
+  storageBucket: "fabio-yamada.appspot.com",
+  messagingSenderId: "74006633477"
 };
 
 
