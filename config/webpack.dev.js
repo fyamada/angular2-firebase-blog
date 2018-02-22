@@ -30,11 +30,11 @@ const METADATA = webpackMerge(commonConfig({env: ENV}).metadata, {
  * Get the firebase project configuration data for development
  */
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyAGIYmdkWSR7z_mM-EpuCw3qssicWrMyDo",
-  authDomain: "fabio-yamada.firebaseapp.com",
-  databaseURL: "https://fabio-yamada.firebaseio.com",
-  storageBucket: "fabio-yamada.appspot.com",
-  messagingSenderId: "74006633477"
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  storageBucket: "",
+  messagingSenderId: ""
 };
 
 
